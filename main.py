@@ -10,6 +10,7 @@ from src.config import settings
 goods_id = "42495"
 
 file = open("data/HistoryPrice.txt", 'a')
+file_reader = open("data/HistoryPrice.txt", 'r')
 csvfile = open('data/HistoryPrice.csv', 'a', newline='')
 csv_writer = csv.writer(csvfile)
 
@@ -44,7 +45,8 @@ while True:
     csvfile.flush()
 
     message_tool = MessageTool()
-    message_tool.send_wechat(goods_name, info_price)
+    file_str = file_reader.read()
+    message_tool.send_wechat(goods_name, file_str)
 
     sleep_time = random.randint(settings.min_sleep_time, settings.max_sleep_time)
     time.sleep(sleep_time)
