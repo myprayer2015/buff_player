@@ -1,8 +1,8 @@
 game = "csgo"
-dynamic_ip_api = "http://api.proxy.ipidea.io/getBalanceProxyIp?num=10&return_type=txt&lb=1&sb=0&flow=1&regions=&protocol=http"
-cookie = "session=1-s2oIkHw4ds09AhH0tYBaS8DdljDPt8L23toxooxWKcej2032452555;P_INFO=17102442897|1675011638|1|netease_buff|00&99|null&null&null#zhj&330400#10#0|&0||17102442897;csrf_token=ImUyM2QxYjFjM2U3ZDRhNzhjMzllOGU1OTZjMWYzOTc2MDM0MzZiYTIi.Frg3ug.7LOxex-xSq9p71oaaiCz5mwGMTM;S_INFO=1675011638|0|0&60##|17102442897;NTES_YD_SESS=TEXGS.R3X00.lmb5zpmVFzb5Y.NcO25.cMQaCXx.RR83Eox_E6mDytyx_R.ChsXgNzmoPhJWchi2uTQCgWI49eixLuVoUweAyVlW7f..osXOXyKcoGenE1vnTrUIYObdPTm_nvhFRynbnoSr6EZkFO06StfH5Rw8s8VG1Gr4KQv5K0qO6nV7wwXP2VRbP6tHEYZPFUfEWPXAONqZ_67NJBBdzMzJBuXKIqe7wNtk1onp1;game=csgo;remember_me=U1105878163|GhlKObnWvDMQvnsDTcM4y3aCFKGGOTqF;Locale-Supported=zh-Hans;Device-Id=nxH7HYSLNQwx4s6DdLPV1"
+dynamic_ip_api = ""
+cookie = ""
 max_sleep_time = 600
 min_sleep_time = 180
 
 #message token
-pushplus_token = "d0f7426ac44d4340ab7fe89c40280d7d"
+pushplus_token = ""

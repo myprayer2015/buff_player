@@ -4,4 +4,3 @@ conf/.secrets.*
 data
 .idea
 src/__pycache__
-conf/settings.toml
