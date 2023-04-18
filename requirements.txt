@@ -1,0 +1,5 @@
+matplotlib
+pandas
+fake_useragent
+dynaconf
+requests

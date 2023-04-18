@@ -46,9 +46,9 @@ while True:
 
     message_tool = MessageTool()
     file_str = file_reader.read()
-    message_tool.send_wechat(goods_name, file_str)
+    #message_tool.send_wechat(goods_name, file_str)
 
     sleep_time = random.randint(settings.min_sleep_time, settings.max_sleep_time)
     time.sleep(sleep_time)
-    drawer = DrawChart()
-    drawer.drawchart()
+    #drawer = DrawChart()
+    #drawer.drawchart()

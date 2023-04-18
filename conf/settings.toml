@@ -1,8 +1,0 @@
-game = "csgo"
-dynamic_ip_api = ""
-cookie = ""
-max_sleep_time = 600
-min_sleep_time = 180
-
-#message token
-pushplus_token = ""
