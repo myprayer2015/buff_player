@@ -1,0 +1,7 @@
+wearcategory0
+wearcategory1
+wearcategory2
+wearcategory3
+wearcategory4
+
+normal

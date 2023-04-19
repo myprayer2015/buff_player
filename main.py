@@ -6,6 +6,7 @@ from src.draw_chart import DrawChart
 from src.buff_manager import BuffManager
 from src.message_tool import MessageTool
 from src.config import settings
+from src.storage.file_storage import FileStorage
 
 goods_id = "42495"
 
@@ -15,9 +16,19 @@ csvfile = open('data/HistoryPrice.csv', 'a', newline='')
 csv_writer = csv.writer(csvfile)
 
 while True:
+    # bmg = BuffManager()
+    # bmg.init_dynamic_info()
+    # bmg.select_all()
+    # break
+
+    # file_storage = FileStorage()
+    # file_storage.connect()
+    # break
+
     bmg = BuffManager()
     bmg.init_dynamic_info()
-    bmg.select_all()
+    bmg.get_sell_order(44999)
+    bmg.get_buy_order(44999)
     break
 
     '''
