@@ -5,4 +5,3 @@ conf/settings.toml
 conf/buff_settings.toml
 data
 .idea
-src/__pycache__
