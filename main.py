@@ -17,6 +17,10 @@ csv_writer = csv.writer(csvfile)
 while True:
     bmg = BuffManager()
     bmg.init_dynamic_info()
+    bmg.select_all()
+    break
+
+    '''
     InfoJson = bmg.get_info(goods_id)
     info = json.loads(InfoJson)
 
@@ -52,3 +56,4 @@ while True:
     time.sleep(sleep_time)
     drawer = DrawChart()
     drawer.drawchart()
+    '''
