@@ -59,7 +59,7 @@ class BuffManager:
                         # 饰品在buff内部的id
                         goods_id = item['id']
                         # 饰品的全名
-                        goods_full_name = json.loads('"%s"' % item['short_name'])
+                        goods_full_name = json.loads('"%s"' % item['name'])
                         goods_sell_num = item['sell_num']
                         goods_min_price = item['sell_min_price']
                         #goods_steam_market_url = item['steam_market_url']
@@ -143,40 +143,69 @@ class BuffManager:
     # 在售记录
     def get_sell_order(self, goods_id):
         if self.proxies != "":
-            request = re.Request(
-                'https://buff.163.com/api/market/goods/sell_order?game=%s&goods_id=%s' % (self.game, goods_id))
-            request.add_header('cookie', self.cookie)
-            request.add_header('User-Agent',
-                               self.user_agent)
-            get = re.urlopen(request)
-            info = json.loads(get.read().decode('utf-8'))
-            if info['code'] != 'OK':
-                return ''
-            for item in info['data']['items']:
-                price = item['price']
-                user_id = item['user_id']
-                id = item['id']
-                # 磨损度
-                paintwear = item['asset_info']['paintwear']
-                asset_id = item['asset_info']['assetid']
-                class_id = item['asset_info']['classid']
-                print(price, user_id, id, paintwear, asset_id, class_id)
+            order_list = []
+            page_num = 1
+            total_page = 3
+            page_size = 20
+            while True:
+                request = re.Request(
+                    'https://buff.163.com/api/market/goods/sell_order?game=%s&goods_id=%s' % (self.game, goods_id))
+                request.add_header('cookie', self.cookie)
+                request.add_header('User-Agent',
+                                self.user_agent)
+                get = re.urlopen(request)
+                info = json.loads(get.read().decode('utf-8'))
+                if info['code'] != 'OK':
+                    return ''
+                for item in info['data']['items']:
+                    order = []
+                    price = item['price']
+                    user_id = item['user_id']
+                    id = item['id']
+                    created_at = item['created_at']
+                    recent_average_duration = item['recent_average_duration']
+                    recent_deliver_rate = item['recent_deliver_rate']
+                    # 磨损度
+                    paintwear = item['asset_info']['paintwear']
+                    asset_id = item['asset_info']['assetid']
+                    class_id = item['asset_info']['classid']
+                    print(id, price, paintwear, user_id, created_at, recent_average_duration, recent_deliver_rate, asset_id, class_id)
+                if page_num >= total_page:
+                    break
+                page_num += 1
 
     # 求购记录
     def get_buy_order(self, goods_id):
         if self.proxies != "":
-            request = re.Request(
-                'https://buff.163.com/api/market/goods/buy_order?game=%s&goods_id=%s' % (self.game, goods_id))
-            request.add_header('cookie', self.cookie)
-            request.add_header('User-Agent',
-                               self.user_agent)
-            get = re.urlopen(request)
-            info = json.loads(get.read().decode('utf-8'))
-            if info['code'] != 'OK':
-                return ''
-            for item in info['data']['items']:
-                price = item['price']
-                user_id = item['user_id']
-                id = item['id']
-                num = item['num']
-                print(price, user_id, id, num)
+            order_list = []
+            page_num = 1
+            total_page = 3
+            page_size = 20
+            while True:
+                request = re.Request(
+                    'https://buff.163.com/api/market/goods/buy_order?game=%s&goods_id=%s' % (self.game, goods_id))
+                request.add_header('cookie', self.cookie)
+                request.add_header('User-Agent',
+                                self.user_agent)
+                get = re.urlopen(request)
+                info = json.loads(get.read().decode('utf-8'))
+                if info['code'] != 'OK':
+                    return ''
+                for item in info['data']['items']:
+                    order = []
+                    order.append(item['id'])
+                    order.append(item['price'])
+                    # 求购数量
+                    order.append(item['num'])
+                    # 求购价格
+                    order.append(item['frozen_amount'])
+                    order.append(item['created_at'])
+                    order.append(item['user_id'])
+                    if 'specific' in item and 'values' in item['specific'] and item['specific']['type'] == 'paintwear':
+                        order.append(item['specific']['value'][0])
+                        order.append(item['specific']['value'][1])
+                    order_list.append(order)
+                    #print(id, price, num, frozen_amount, created_at, user_id)
+                if page_num >= total_page:
+                    break
+                page_num += 1

@@ -2,6 +2,8 @@ import json
 import csv
 import time
 import random
+import concurrent.futures
+
 from src.draw_chart import DrawChart
 from src.buff_manager import BuffManager
 from src.message_tool import MessageTool
@@ -25,10 +27,42 @@ while True:
     # file_storage.connect()
     # break
 
-    bmg = BuffManager()
-    bmg.init_dynamic_info()
-    bmg.get_sell_order(44999)
-    bmg.get_buy_order(44999)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+        storage = FileStorage()
+        storage.connect()
+        with open('data/target_goods.txt', 'r', encoding='utf-8') as target_goods:
+            full_name_list = []
+            exterior_list = []
+            quality_list = []
+            for line in target_goods:
+                item = line.split()
+                full_name_list.append(item[0])
+                exterior_list.append(item[1])
+                quality_list.append(item[2])
+            id_list = storage.get_ids_by_goods_info(full_name_list, exterior_list, quality_list)
+            if len(id_list) == 0:
+                print("empty id list")
+            bmg = BuffManager()
+            bmg.init_dynamic_info()
+            for id in id_list:
+                print("get_buy_info, id=%s" % id)
+                bmg.get_sell_order(id)
+
+        # future_to_url = {executor.submit(load_url, url): url for url in URLS}
+        # for future in concurrent.futures.as_completed(future_to_url):
+        #     url = future_to_url[future]
+        #     try:
+        #         # 循环的获取认任务执行的结果
+        #         data = future.result()
+        #     except Exception as exc:
+        #         print('generated an exception')
+        #     else:
+        #         print('页面内容省略')
+
+    # bmg = BuffManager()
+    # bmg.init_dynamic_info()
+    # bmg.get_sell_order(44999)
+    # bmg.get_buy_order(44999)
     break
 
     '''

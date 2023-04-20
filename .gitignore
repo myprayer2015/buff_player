@@ -1,8 +1,8 @@
 
 # Ignore dynaconf secret files
 conf/.secrets.*
-conf/settings.toml
 conf/buff_settings.toml
+conf/cookies.txt
 data
 .idea
 src/__pycache__/
