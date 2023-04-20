@@ -159,14 +159,14 @@ class BuffManager:
                     return ''
                 for item in info['data']['items']:
                     order = []
-                    id = item['id']
                     price = item['price']
-                    # 磨损度
-                    paintwear = item['asset_info']['paintwear']
                     user_id = item['user_id']
+                    id = item['id']
                     created_at = item['created_at']
                     recent_average_duration = item['recent_average_duration']
                     recent_deliver_rate = item['recent_deliver_rate']
+                    # 磨损度
+                    paintwear = item['asset_info']['paintwear']
                     asset_id = item['asset_info']['assetid']
                     class_id = item['asset_info']['classid']
                     print(id, price, paintwear, user_id, created_at, recent_average_duration, recent_deliver_rate, asset_id, class_id)

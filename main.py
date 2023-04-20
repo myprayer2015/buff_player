@@ -18,10 +18,9 @@ csvfile = open('data/HistoryPrice.csv', 'a', newline='')
 csv_writer = csv.writer(csvfile)
 
 while True:
-    # bmg = BuffManager()
-    # bmg.init_dynamic_info()
-    # bmg.select_all()
-    # break
+    bmg = BuffManager()
+    bmg.init_dynamic_info()
+    break
 
     # file_storage = FileStorage()
     # file_storage.connect()
