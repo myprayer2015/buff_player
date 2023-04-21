@@ -6,4 +6,6 @@ conf/cookies.txt
 data
 .idea
 src/__pycache__/
-src/storage/__pycache__/
+src/storage/__pycache__
+src/utils/__pycache__
+src/utils/__pycache__

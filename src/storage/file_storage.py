@@ -1,5 +1,6 @@
 import codecs
 import csv
+from ctypes import sizeof
 
 from .storage import Storage
 
@@ -33,10 +34,10 @@ class FileStorage(Storage):
                 return value[0]
         return '-1'
     
-    def get_ids_by_goods_info(self, names, exteriors, qualitys):
+    def get_ids_by_goods_info(self, names, exteriors, qualitys, internal_names, stattraks):
         id_list = []
         for i in range(len(names)):
-            if i >= len(exteriors) or i >= len(qualitys):
+            if i >= len(exteriors) or i >= len(qualitys) or i >= len(internal_names) or i >= len(stattraks):
                 break
             name_items = []
             exterior_items = []
@@ -57,8 +58,10 @@ class FileStorage(Storage):
                 name_match_flag = True
                 exterior_match_flag = True
                 quality_match_flag = True
+                internal_name_match_flag = True
+                stattrak_match_flag = True
                 for item in name_items:
-                    if item not in key:
+                    if item not in key and item != 'all':
                         name_match_flag = False
                         break
                 for item in exterior_items:
@@ -69,7 +72,11 @@ class FileStorage(Storage):
                     if item != value[4] and item != 'all':
                         quality_match_flag = False
                         break
-                if name_match_flag and exterior_match_flag and quality_match_flag:
+                if internal_names[i] not in value[2] and internal_names[i] != 'all':
+                    internal_name_match_flag = False
+                if stattraks[i] != value[5] and stattraks[i] != 'all':
+                    stattrak_match_flag = False
+                if name_match_flag and exterior_match_flag and quality_match_flag and internal_name_match_flag and stattrak_match_flag:
                     id_list.append(value[0])
         return id_list
     
