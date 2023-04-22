@@ -1,19 +1,9 @@
-import codecs
-import json
-import csv
-import time
-import random
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from src.draw_chart import DrawChart
 from src.buff_manager import BuffManager
-from src.utils.http_utils import HttpUtils
-from src.message_tool import MessageTool
-from src.config import settings
 from src.storage.file_storage import FileStorage
-import requests
-from urllib.parse import quote
 
+from src.utils.http_util import HttpUtil
 
 
 def dump_goods_info():
@@ -23,7 +13,7 @@ def dump_goods_info():
 
 def buff_manager_test():
     buf = BuffManager()
-    buf.get_sell_order('776305')
+    print(buf.get_sell_order('776305'))
 
 def get_goods_buff_data():
     storage = FileStorage()
@@ -57,11 +47,12 @@ def get_goods_buff_data():
             print('finished')
 
 # get_goods_buff_data()
-buff_manager_test()
+# buff_manager_test()
+dump_goods_info()
 
 '''
 
-message_tool = MessageTool()
+message_tool = MessageUtil()
 file_str = file_reader.read()
 message_tool.send_wechat(goods_name, file_str)
 

@@ -1,7 +1,7 @@
 import requests
 from src.config import settings
 
-class MessageTool:
+class MessageUtil:
     def send_wechat(self, title, content):
         token = settings.pushplus_token
         template = 'txt'

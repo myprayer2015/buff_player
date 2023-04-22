@@ -1,2 +1,2 @@
-from . import http_utils
-from . import time_utils
+from . import http_util
+from . import time_util

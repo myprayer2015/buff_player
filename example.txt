@@ -8,4 +8,6 @@ normal
 
 # target_goods.txt
 # name, exteriors, qualitys, internal_names, stattrak
-all wearcategory0 normal weapon_knife normal
+all wearcategory0 all weapon_knife normal
+# Ô­Æ¤µ¶
+all wearcategoryna all weapon_knife normal
