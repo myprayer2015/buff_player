@@ -1,8 +1,11 @@
 game = ""
 dynamic_ip_api = ""
-cookie = ""
-max_sleep_time = 10
-min_sleep_time = 5
 
 #message token
 pushplus_token = ""
+
+max_sleep_time = 600
+min_sleep_time = 180
+request_time_out = 5
+request_retry_warning_num = 10
+request_retry_stop_num = 20
