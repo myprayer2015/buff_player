@@ -1,5 +1,5 @@
+from typing_extensions import Self
 import urllib.request as re
-from urllib.request import ProxyHandler, build_opener
 import urllib.parse
 import requests
 import json
@@ -20,10 +20,12 @@ class BuffManager:
     user_agent = ""
     cookie = ""
     http_util = HttpUtil()
-    http_util.init()
 
     def __init__(self):
         pass
+
+    def init(self):
+        self.http_util.init()
 
     def select_all(self):
         with codecs.open('data/goods_info.csv', 'w', 'gbk', 'ignore') as csvfile:
@@ -33,7 +35,6 @@ class BuffManager:
             total_page = 253
             while True:
                 url = 'https://buff.163.com/api/market/goods?game=%s&page_num=%s&page_size=500&sort_by=price.desc' % (self.game, str(page_num))
-
                 info = self.http_util.get(url)
 
                 # try:
@@ -188,7 +189,7 @@ class BuffManager:
                     # print(id, price, paintwear, user_id, created_at, recent_average_duration, recent_deliver_rate, asset_id, class_id)
                 total_page = info['data']['total_page']
             else:
-                print('[get_sell_order] fail to get info, id=%s' % goods_id)
+                print('[get_bill_order] fail to get info, id=%s' % goods_id)
             if page_num >= total_page:
                 time_util.stop()
                 break
@@ -207,7 +208,7 @@ class BuffManager:
         while True:
             time_util.start()
             url = 'https://buff.163.com/api/market/goods/sell_order?game=%s&goods_id=%s&page_num=%s&page_size=%s' % (self.game, goods_id, str(page_num), str(page_size))
-            info = self.http_util.get(url)
+            info = self.http_util.get(url, goods_id, page_num)
             if info:
                 for item in info['data']['items']:
                     order = []
@@ -224,14 +225,14 @@ class BuffManager:
                     # print(id, price, paintwear, user_id, created_at, recent_average_duration, recent_deliver_rate, asset_id, class_id)
                 total_page = info['data']['total_page']
             else:
-                print('[get_sell_order] fail to get info, id=%s' % goods_id)
+                print('[get_sell_order] fail to get info, id=%s page_num=%d' % (goods_id, page_num))
             if page_num >= total_page:
                 time_util.stop()
                 break
             time_util.stop()
             page_num += 1
         print("[get_sell_order] all_tm=%d avg_tm=%f goods_id=%s" % (time_util.get_all_time_ms(), time_util.get_avg_time_ms(), goods_id))
-        return order_list
+        return goods_id, order_list
 
     # 求购记录
     def get_buy_order(self, goods_id):

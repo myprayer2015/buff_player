@@ -18,6 +18,9 @@ class TimeUtil:
         self.single_time_ms = self.time_stop - self.time_start
         self.all_time_ms += self.single_time_ms
 
+    def clear(self):
+        self.time_start = int(round(time.time() * 1000))
+
     def get_single_time_ms(self):
         return self.single_time_ms
     
@@ -30,5 +33,5 @@ class TimeUtil:
         else:
             return 0
 
-    def get_current_time(self):
+    def get_current_time_ms(self):
         return round(time.time() * 1000)
