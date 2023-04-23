@@ -14,6 +14,7 @@ import atexit
 from src.config import settings
 from .time_util import TimeUtil
 from .message_util import MessageUtil
+from .log_util import LogUtil
 
 class HttpUtil:
     cookies_list = []
@@ -64,7 +65,6 @@ class HttpUtil:
         pass
 
     def update(self):
-        print('update before quit, len=%d' % len(self.cookies_list))
         with open('data/cookies.txt', 'w') as f:
             for cookie in self.cookies_list:
                 if self.cookies_lock_map[cookie][1] == 1:
@@ -89,6 +89,40 @@ class HttpUtil:
                 # self.cookies_lock_map[cookie][0].wait()
         return cookie
 
+    def check_cookie(self):
+        with open('data/cookies.txt', 'r') as f:
+            for line in f.readlines():
+                self.cookies_lock_map[str(line).rstrip()] = [threading.Condition(), 1, self.time_util.get_current_time_ms()]
+                self.cookies_list.append(str(line).rstrip())
+        for cookie in self.cookies_list:
+            try:
+                url = 'https://buff.163.com/api/market/goods/sell_order?game=csgo&goods_id=45462&page_num=1&page_size=20'
+                cookie = cookie
+                dynamic_proxy = self.get_dynamic_proxy()
+                proxy_handler = ProxyHandler({
+                    'http': 'http://' + dynamic_proxy,
+                    'https': 'https://' + dynamic_proxy
+                })
+                opener = build_opener(proxy_handler)
+                request = re.Request(url)
+                request.add_header('cookie', cookie)
+                request.add_header('User-Agent', UserAgent().random)
+                # get = re.urlopen(request)
+                get = opener.open(request)
+                info = json.loads(get.read().decode('utf-8'))
+            except OSError as err:
+                LogUtil.warning("[os_error][check_cookie] OS error: {0}, dynamic_proxy={1}, url={2}".format(err, dynamic_proxy, url))
+                info = None
+            except:
+                LogUtil.warning("[unkown][check_cookie] Unexpected error:%s, dynamic_proxy=%s, url=%s" % (sys.exc_info()[0], dynamic_proxy, url))
+                info = None
+            if not info or info['code'] != 'OK':
+                if info:
+                    # cookie±»·â£¬²»ËãÖØÊÔ
+                    LogUtil.warning('[check_cookie][invalid_cookie] info=%s cookie=%s' % (info, cookie))
+            else:
+                # LogUtil.info('[check_cookie][valid_cookie] cookie=%s info=%s' % (cookie, info))
+                pass
     def get_dynamic_proxy(self):
         proxy = ''
         while True:
@@ -111,10 +145,10 @@ class HttpUtil:
             if retry_num == settings.request_retry_warning_num:
                 title = 'NetError'
                 content = 'Retry too many times, cookie=' + cookie + ', proxy=' + dynamic_proxy + ', url=' + url
-                print('[get] Retry too many times, just warning, goods_id=%s, page_num=%d retry_num=%d' % (goods_id, page_num, retry_num))
+                LogUtil.warning('[get] Retry too many times, just warning, goods_id=%s, page_num=%d retry_num=%d' % (goods_id, page_num, retry_num))
                 self.message_util.send_wechat(title, content)
             if retry_num >= settings.request_retry_stop_num:
-                print('[get] Retry too many times, need break, goods_id=%s, page_num=%d retry_num=%d' % (goods_id, page_num, retry_num))
+                LogUtil.error('[get] Retry too many times, need break, goods_id=%s, page_num=%d retry_num=%d' % (goods_id, page_num, retry_num))
                 break
             try:
                 cookie = self.get_cookie()
@@ -135,10 +169,11 @@ class HttpUtil:
                 open_time_util.stop()
                 info = json.loads(get.read().decode('utf-8'))
             except OSError as err:
-                print("[os_error][get] OS error: {0}, dynamic_proxy={1}, url={2}, goods_id={3}, page_num={4}".format(err, dynamic_proxy, url, goods_id, page_num))
+                LogUtil.warning("[os_error][get] OS error: {0}, dynamic_proxy={1}, url={2}, goods_id={3}, page_num={4}".format(err, dynamic_proxy, url, goods_id, page_num))
                 info = None
             except:
-                print("[unkown][get] Unexpected error:", sys.exc_info()[0], " dynamic_proxy=", dynamic_proxy, " url=", url, " goods_id=", goods_id, " page_num=", page_num)
+                LogUtil.warning("[unkown][get] Unexpected error:%s, dynamic_proxy=%s, url=%s goods_id=%s, page_num=%d" % (sys.exc_info()[0], dynamic_proxy, url, goods_id, page_num))
+                # LogUtil.warning("[unkown][get] Unexpected error:", sys.exc_info()[0], " dynamic_proxy=", dynamic_proxy, " url=", url, " goods_id=", goods_id, " page_num=", page_num)
                 info = None
             if not info or info['code'] != 'OK':
                 if info:
@@ -148,18 +183,18 @@ class HttpUtil:
                         title = 'WrongCookie'
                         content = 'cookie is valid, cookie=' + cookie
                         self.message_util.send_wechat(title, content)
-                        print('invalid cookie:', cookie)
+                        LogUtil.warning('invalid cookie:', cookie)
                         self.cookies_lock_map[cookie][0].release()
                         continue
                     else:
-                        print('[http_util][get] info is invalid, info=%s cookie=%s' % (info, cookie))
+                        LogUtil.warning('[http_util][get] info is invalid, info=%s cookie=%s' % (info, cookie))
                     
                 retry_num += 1
                 continue
             else:
-                print("[http_util][get] get_proxy_avg_tm=%f open_avg_tm=%f" % (proxy_time_util.get_avg_time_ms(), open_time_util.get_avg_time_ms()))
+                LogUtil.info("[http_util][get] get_proxy_avg_tm=%f open_avg_tm=%f" % (proxy_time_util.get_avg_time_ms(), open_time_util.get_avg_time_ms()))
                 self.cookies_lock_map[cookie][0].release()
                 return info
-        print("[http_util][get] get_proxy_avg_tm=%f open_avg_tm=%f" % (proxy_time_util.get_avg_time_ms(), open_time_util.get_avg_time_ms()))
+        LogUtil.info("[http_util][get] get_proxy_avg_tm=%f open_avg_tm=%f" % (proxy_time_util.get_avg_time_ms(), open_time_util.get_avg_time_ms()))
         self.cookies_lock_map[cookie][0].release()
         return None

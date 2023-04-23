@@ -11,3 +11,15 @@ normal
 all wearcategory0 all weapon_knife normal
 # Ô­Æ¤µ¶
 all wearcategoryna all weapon_knife normal
+all wearcategoryna all weapon_knife normal
+all wearcategory0 all weapon_knife normal
+all wearcategory1 all weapon_knife normal
+all wearcategory0 all weapon_ak47 normal
+all wearcategory1 all weapon_ak47 normal
+all wearcategory0 all weapon_awp normal
+all wearcategory1 all weapon_awp normal
+all wearcategory0 all weapon_m4a1 normal
+all wearcategory1 all weapon_m4a1 normal
+all wearcategory0 all weapon_m4a1_silencer normal
+all wearcategory1 all weapon_m4a1_silencer normal
+ÊÖÌ× wearcategory0 all all normal

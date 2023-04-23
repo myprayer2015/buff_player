@@ -24,8 +24,8 @@ class FileStorage(Storage):
                 self.goods_map[line[1]] = line
     
     def get_name_by_goods_id(self, goods_id):
-        if goods_id in goods_map:
-            return goods_map[goods_id]
+        if goods_id in self.goods_map:
+            return self.goods_map[goods_id]
         return 'default_name'
 
     def get_id_by_goods_info(self, name, exterior = 'wearcategory0', quality = 'normal'):
