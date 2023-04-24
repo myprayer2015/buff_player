@@ -21,21 +21,22 @@ def buff_manager_test():
     buf = BuffManager()
     LogUtil.info(buf.get_sell_order('776305'))
 
+def check_cookies():
+    http_util = HttpUtil()
+    http_util.init()
+    http_util.check_cookie()
+
 def get_goods_buff_data():
     storage = FileStorage()
     storage.connect()
     with ThreadPoolExecutor(max_workers=10) as executor:
-        with open('data/target_goods.txt', 'r', encoding='utf-8') as target_goods:
+        with open('data/target_goods.txt', 'r', encoding='gbk') as target_goods:
             full_name_list = []
             exterior_list = []
             quality_list = []
             internal_name_list = []
             stattrak_list = []
-            flag = 0
             for line in target_goods:
-                if flag == 0:
-                    flag += 1
-                    continue
                 item = line.split()
                 full_name_list.append(item[0])
                 exterior_list.append(item[1])
@@ -59,12 +60,12 @@ def get_goods_buff_data():
                         csv_writer.writerow(item)
             LogUtil.info('finished')
 
-log_util = LogUtil()
+# log_util = LogUtil()
 # LogUtil.info('111')
-get_goods_buff_data()
+# get_goods_buff_data()
 # buff_manager_test()
 # dump_goods_info()
-
+check_cookies()
 
 '''
 

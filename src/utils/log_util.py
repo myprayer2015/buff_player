@@ -21,7 +21,7 @@ class LogUtil:
         #                                                               backupCount=168, encoding='latin-1',
         #                                                               errors='ignore')
 
-        concurrent_handler.suffix = "buff_player.log.%Y%m%d%H"
+        concurrent_handler.suffix = "%Y%m%d%H"
         # formatter = logging.Formatter('%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s:  %(message)s')
         formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
         concurrent_handler.setFormatter(formatter)

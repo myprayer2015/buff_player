@@ -8,6 +8,7 @@ normal
 
 # target_goods.txt
 # name, exteriors, qualitys, internal_names, stattrak
+# 全名, 磨损, 类别(tournament纪念品, normal普通, unusual手套基本都是这个), buff内名字, 是否带计数器
 all wearcategory0 all weapon_knife normal
 # 原皮刀
 all wearcategoryna all weapon_knife normal
