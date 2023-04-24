@@ -60,12 +60,12 @@ def get_goods_buff_data():
                         csv_writer.writerow(item)
             LogUtil.info('finished')
 
-# log_util = LogUtil()
-# LogUtil.info('111')
-# get_goods_buff_data()
+LogUtil.init()
+get_goods_buff_data()
+
 # buff_manager_test()
 # dump_goods_info()
-check_cookies()
+# check_cookies()
 
 '''
 

@@ -183,7 +183,6 @@ class HttpUtil:
                     title = 'WrongCookie'
                     content = 'cookie is valid, cookie=' + cookie
                     self.message_util.send_wechat(title, content)
-                    LogUtil.warning('[http_util][get] invalid cookie:', cookie)
                     self.cookies_lock_map[cookie][0].release()
                     continue
                 retry_num += 1

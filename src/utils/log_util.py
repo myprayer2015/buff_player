@@ -6,18 +6,22 @@ from concurrent_log import ConcurrentTimedRotatingFileHandler
 class LogUtil:
     # 初始化日志
     def __init__(self):
-        self.logPath = 'data/log/'
-        self.logName = 'buff_player.log'
-        self.logFile = self.logPath + self.logName
+        pass
 
-        self.log_path = os.getcwd() + os.sep + self.logPath
-        if not os.path.isdir(self.log_path):
-            os.makedirs(self.log_path)
+    @staticmethod
+    def init():
+        logPath = 'data/log/'
+        logName = 'buff_player.log'
+        logFile = logPath + logName
 
-        concurrent_handler = ConcurrentTimedRotatingFileHandler(self.logFile, when='H', interval=1,
+        log_path = os.getcwd() + os.sep + logPath
+        if not os.path.isdir(log_path):
+            os.makedirs(log_path)
+
+        concurrent_handler = ConcurrentTimedRotatingFileHandler(logFile, when='H', interval=1,
                                                                       backupCount=168, encoding='utf-8',
                                                                       errors='ignore')
-        # concurrent_handler = logging.handlers.TimedRotatingFileHandler(self.logFile, when='H', interval=1,
+        # concurrent_handler = logging.handlers.TimedRotatingFileHandler(logFile, when='H', interval=1,
         #                                                               backupCount=168, encoding='latin-1',
         #                                                               errors='ignore')
 
@@ -39,7 +43,6 @@ class LogUtil:
             format = '%(asctime)s [%(levelname)s] %(message)s',
             encoding = 'latin-1', errors = 'ignore',
             handlers = handler_list)
-
 
 
 
