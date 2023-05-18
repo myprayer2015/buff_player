@@ -11,6 +11,7 @@ from src.storage.file_storage import FileStorage
 from src.utils.http_util import HttpUtil
 from src.utils.time_util import TimeUtil
 from src.utils.log_util import LogUtil
+from src.config import settings
 
 def dump_goods_info():
     bmg = BuffManager()
@@ -53,7 +54,7 @@ def get_goods_buff_data():
             for future in as_completed(work_list):
                 data = future.result()
                 LogUtil.info('[complete] id=%s' % data[0])
-                sell_order_file = 'data/sell_order/' + data[0]
+                sell_order_file = settings.sell_order_data_dir + data[0]
                 with codecs.open(sell_order_file, 'w', 'gbk', 'ignore') as csvfile:
                     csv_writer = csv.writer(csvfile)
                     for item in data[1]:
@@ -61,7 +62,16 @@ def get_goods_buff_data():
             LogUtil.info('finished')
 
 LogUtil.init()
-get_goods_buff_data()
+# get_goods_buff_data()
+
+bmg = BuffManager()
+bmg.init()
+result = bmg.get_sell_order('33915')
+order_list = result[1]
+for item in order_list:
+    print(item)
+# print(result)
+
 
 # buff_manager_test()
 # dump_goods_info()

@@ -1,3 +1,5 @@
+from hashlib import new
+import os
 from typing_extensions import Self
 import urllib.request as re
 import urllib.parse
@@ -21,6 +23,10 @@ class BuffManager:
     user_agent = ""
     cookie = ""
     http_util = HttpUtil()
+    path_map = {}
+    path_map['sell'] = settings.sell_order_data_dir
+    path_map['bill'] = settings.bill_order_data_dir
+    path_map['buy'] = settings.buy_order_data_dir
 
     def __init__(self):
         pass
@@ -78,7 +84,16 @@ class BuffManager:
                     break
                 page_num += 1
                 time.sleep(5)
-
+        
+    def get_newest_recorder(self, order_type, goods_id):
+        goods_file = self.path_map[order_type] + goods_id
+        if os.path.isfile(goods_file):
+            with codecs.open(goods_file, 'r', 'gbk', 'ignore') as csvfile:
+                csv_reader = csv.reader(csvfile)
+                for line in csv_reader:
+                    return line
+        else:
+            return None
 
     def get_bill_order(self, goods_id):
         time_util = TimeUtil()
@@ -86,12 +101,29 @@ class BuffManager:
         page_num = 1
         total_page = 1
         page_size = 20
+        newest_recorder = self.get_newest_recorder('sell', goods_id)
+        if newest_recorder:
+            newest_tmp = int(newest_recorder[4])
+        else:
+            newest_tmp = -1
+        continue_get_flag = True
         while True:
             time_util.start()
             url = 'https://buff.163.com/api/market/goods/bill_order?game=%s&goods_id=%s&page_num=%s&page_size=%s' % (self.game, goods_id, str(page_num), str(page_size))
             info = self.http_util.get(url)
             if info:
                 for item in info['data']['items']:
+                    cur_tmp = int(item['created_at'])
+                    if cur_tmp < newest_tmp:
+                        continue_get_flag = False
+                        break
+                    elif cur_tmp == newest_tmp:
+                        if newest_recorder[0] == item['id'] \
+                            or newest_recorder[3] == item['user_id'] \
+                            or newest_recorder[7] == item['asset_info']['assetid'] \
+                            or newest_recorder[8] == item['asset_info']['classid']:
+                            continue_get_flag = False
+                            break
                     order = []
                     order.append(item['asset_info']['id'])
                     order.append(item['price'])
@@ -119,6 +151,8 @@ class BuffManager:
                 time_util.stop()
                 break
             time_util.stop()
+            if continue_get_flag == False:
+                break
             page_num += 1
         LogUtil.info("[get_bill_order] all_tm=%d avg_tm=%f goods_id=%s" % (time_util.get_all_time_ms(), time_util.get_avg_time_ms(), goods_id))
         return order_list
@@ -130,23 +164,49 @@ class BuffManager:
         page_num = 1
         total_page = 1
         page_size = 20
+        newest_recorder = self.get_newest_recorder('sell', goods_id)
+        # if newest_recorder:
+        #     newest_created_tmp = int(newest_recorder[4])
+        #     newest_updated_tmp = int(newest_recorder[5])
+        # else:
+        #     newest_created_tmp = -1
+        #     newest_updated_tmp = -1
+        continue_get_flag = True
         while True:
             time_util.start()
-            url = 'https://buff.163.com/api/market/goods/sell_order?game=%s&goods_id=%s&page_num=%s&page_size=%s' % (self.game, goods_id, str(page_num), str(page_size))
+            url = 'https://buff.163.com/api/market/goods/sell_order?game=%s&goods_id=%s&page_num=%s&page_size=%s&sort_by=created.desc' % (self.game, goods_id, str(page_num), str(page_size))
+            print(url)
             info = self.http_util.get(url, goods_id, page_num)
+            print(info)
             if info:
                 for item in info['data']['items']:
+                    cur_created_tmp = int(item['created_at'])
                     order = []
                     order.append(item['id'])
                     order.append(item['price'])
                     order.append(item['asset_info']['paintwear'])
                     order.append(item['user_id'])
                     order.append(item['created_at'])
+                    order.append(item['updated_at'])
                     order.append(item['recent_average_duration'])
                     order.append(item['recent_deliver_rate'])
                     order.append(item['asset_info']['assetid'])
                     order.append(item['asset_info']['classid'])
                     order_list.append(order)
+                    # if cur_created_tmp < newest_created_tmp:
+                    #     continue_get_flag = False
+                    #     LogUtil.info('1, cur_tmp=%d, newest_tmp=%d'% (cur_created_tmp, newest_created_tmp))
+                    #     LogUtil.info(order)
+                    #     break
+                    # elif cur_created_tmp == newest_created_tmp:
+                    #     if newest_recorder[0] == item['id'] \
+                    #         or newest_recorder[3] == item['user_id'] \
+                    #         or newest_recorder[7] == item['asset_info']['assetid'] \
+                    #         or newest_recorder[8] == item['asset_info']['classid']:
+                    #         continue_get_flag = False
+                    #         LogUtil.info('2')
+                    #         LogUtil.info(order)
+                    #         break
                     # LogUtil.info(id, price, paintwear, user_id, created_at, recent_average_duration, recent_deliver_rate, asset_id, class_id)
                 total_page = info['data']['total_page']
             else:
@@ -155,7 +215,12 @@ class BuffManager:
                 time_util.stop()
                 break
             time_util.stop()
+            if continue_get_flag == False:
+                LogUtil.info("flag_is_false")
+                break
             page_num += 1
+            if page_num > 1:
+                break
         LogUtil.info("[get_sell_order] all_tm=%d avg_tm=%f goods_id=%s" % (time_util.get_all_time_ms(), time_util.get_avg_time_ms(), goods_id))
         return goods_id, order_list
 
@@ -166,12 +231,29 @@ class BuffManager:
         page_num = 1
         total_page = 1
         page_size = 20
+        newest_recorder = self.get_newest_recorder('sell', goods_id)
+        if newest_recorder:
+            newest_tmp = int(newest_recorder[4])
+        else:
+            newest_tmp = -1
+        continue_get_flag = True
         while True:
             time_util.start()
             url = 'https://buff.163.com/api/market/goods/buy_order?game=%s&goods_id=%s&page_num=%s&page_size=%s' % (self.game, goods_id, str(page_num), str(page_size))
             info = self.http_util.get(url)
             if info:
                 for item in info['data']['items']:
+                    cur_tmp = int(item['created_at'])
+                    if cur_tmp < newest_tmp:
+                        continue_get_flag = False
+                        break
+                    elif cur_tmp == newest_tmp:
+                        if newest_recorder[0] == item['id'] \
+                            or newest_recorder[3] == item['user_id'] \
+                            or newest_recorder[7] == item['asset_info']['assetid'] \
+                            or newest_recorder[8] == item['asset_info']['classid']:
+                            continue_get_flag = False
+                            break
                     order = []
                     order.append(item['id'])
                     order.append(item['price'])
@@ -193,6 +275,8 @@ class BuffManager:
                 time_util.stop()
                 break
             time_util.stop()
+            if continue_get_flag == False:
+                break
             page_num += 1
         LogUtil.info("[get_buy_order] all_tm=%d avg_tm=%f goods_id=%s" % (time_util.get_all_time_ms(), time_util.get_avg_time_ms(), goods_id))
         return order_list
